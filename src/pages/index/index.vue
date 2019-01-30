@@ -1,74 +1,101 @@
 <template>
-  <div>
-    <div
-      class="row"
-      v-for="(item, index) in items"
-      :key="index"
-      :class="{'grey-bg': index % 2 === 0}"
-    >{{ item }}</div>
-    <model />
+  <div class="test">
+    <div class="message" @click="message">message</div>
+    <div class="message" @click="messageIcon">messageIcon</div>
+    <div class="message" @click="loading">loading</div>
+    <div class="message" @click="model">model</div>
+    <div class="message" @click="showSheet">actionSheet</div>
+    <model/>
+    <!-- action-sheet用到了双向绑定的原理 -->
+    <action-sheet
+      v-model="toggle"
+      :actions="actions"
+      @operate="operate"
+      @deleteSomething="deteleSomething"
+      title="标题"
+    />
   </div>
 </template>
 
 <script>
 import model from '../model/index.vue'
+import actionSheet from 'c/actionSheet/index'
 export default {
   data () {
     return {
-      test: '1',
-      items: ['1 - keep walking, be 2 with you.', '2 - keep walking, be 2 with you.']
+      show: 'model',
+      actions: ['操作一', '操作二'],
+      toggle: false
     }
   },
-  methods: {},
-  mounted () {
-    for (var i = 1; i <= 20; i++) {
-      this.items.push(i + ' - keep walking, be 2 with you.')
+  methods: {
+    // 没有icon
+    message () {
+      this.$messageModel({
+        type: 'message'
+      })
+    },
+    // 有icon
+    messageIcon () {
+      this.$messageModel({
+        type: 'message',
+        icon: '/static/imgs/success-right.png',
+        inner: '' // 提示内容
+      })
+    },
+    // loading
+    loading () {
+      this.$showLoading()
+      setTimeout(() => {
+        this.$hideLoading()
+      }, 5000)
+    },
+    // 模态框
+    model () {
+      this.$messageModel({
+        type: 'messageBox',
+        title: '你好', // 标题
+        inner: '哈哈哈哈', // 内容
+        tip: false, // 切换
+        success: () => {
+          // 要使用箭头函数
+          console.log(this.show)
+        },
+        fail: () => {
+          // 删除按钮触发 // 此处有待改进
+          console.log(this.show)
+        }
+      })
+    },
+    // operate
+    operate (ind) {
+      console.log(this.actions[ind])
+    },
+    deteleSomething () {
+      console.log('删除')
+    },
+    showSheet () {
+      this.toggle = true
     }
-    this.$messageModel({
-      type: 'loading',
-      icon: '/static/imgs/success-right.png'
-    })
-    // this.$messageModel({
-    //   inner: '登录成功',
-    //   type: 'message',
-    //   icon: '/static/imgs/success-right.png',
-    //   success: () => {
-    //     console.log(this.items)
-    //   },
-    //   fail: () => {
-    //     console.log(this.test)
-    //   }
-    // })
-    // this.$messageModel({
-    //   title: '你好',
-    //   inner: '这是一行描述文字，如果这里有两行是这种效果，不允许三行文字出现。',
-    //   type: 'messageBox',
-    //   success: () => {
-    //     console.log(this.items)
-    //   },
-    //   fail: () => {
-    //     console.log(this.test)
-    //   }
-    // })
   },
+  mounted () {},
   components: {
-    model
+    model,
+    actionSheet
   }
 }
 </script>
 
 <style scoped>
-.row {
-  width: 100%;
-  height: 100px;
-  padding: 20px 0;
-  font-size: 32px;
-  line-height: 60px;
+.message {
+  width: 80%;
+  height: 88px;
+  line-height: 88px;
+  background: #4283f4;
+  border-radius: 16px;
+  margin: 0 auto;
   text-align: center;
-  color: #444;
-  background-color: #fff;
-}
-.grey-bg {
-  background-color: #eee;
+  margin-top: 30px;
+  color: #fff;
 }
 </style>

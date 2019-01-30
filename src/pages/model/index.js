@@ -12,7 +12,9 @@ export default function registryModel (v) {
       success: null,
       fail: null,
       type: '',
-      icon: ''
+      icon: '',
+      duration: '',
+      tip: true
     },
     mutations: {
       hideModel (state) {
@@ -27,9 +29,21 @@ export default function registryModel (v) {
           success: data.success || null,
           fail: data.fail || null,
           type: data.type || '',
-          icon: data.icon || ''
+          icon: data.icon || '',
+          duration: data.duration || 2000,
+          tip: data.tip
         }
         state = Object.assign(state, defaultData)
+      },
+      showLoading (state) {
+        state.toggle = true
+        state.type = 'loading'
+        state.icon = '/static/imgs/success-right.png'
+      },
+      hideLoading (state) {
+        state.toggle = false
+        state.type = ''
+        state.icon = ''
       }
     }
   })
@@ -38,7 +52,17 @@ export default function registryModel (v) {
     if (!(data instanceof Object)) {
       console.log('传参错误')
     } else {
-      v.prototype.$modelStore.commit('showModel', data)
+      if (data.type === 'messageBox' || data.type === 'message') {
+        v.prototype.$modelStore.commit('showModel', data)
+      }
     }
+  }
+  // 注册loading显示方法
+  v.prototype.$showLoading = function () {
+    v.prototype.$modelStore.commit('showLoading')
+  }
+  // 注册loading隐藏方法
+  v.prototype.$hideLoading = function () {
+    v.prototype.$modelStore.commit('hideLoading')
   }
 }

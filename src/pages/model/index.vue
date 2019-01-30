@@ -4,8 +4,8 @@
       <div class="title">{{title}}</div>
       <div class="message-inner">{{inner}}</div>
       <div class="message-operating">
-        <!-- <div class="certain" @click="callBack">确定</div> -->
-        <div class="detele">
+        <div class="certain" @click="callBack" v-if="tip">确定</div>
+        <div class="detele" v-else>
           <div class="detele-cancel" @click="cancel">取消</div>
           <div class="detele-button" @click="deleteSomething">删除</div>
         </div>
@@ -14,7 +14,7 @@
     <div v-if="type === 'message'" class="message-tip">
       <div class="message-tip-item" :class="{haveIcon: icon !== ''}">
         <div class="message-icon" v-if="icon">
-          <image :src="icon" mode="widthFix"/>
+          <image :src="icon" mode="widthFix" />
         </div>
         <div class="message-text" :class="{noicon: icon === ''}">{{inner}}</div>
       </div>
@@ -37,7 +37,17 @@ export default {
       return this.$modelStore.state.inner
     },
     toggle () {
-      return this.$modelStore.state.toggle
+      let toggle = this.$modelStore.state.toggle
+      let type = this.$modelStore.state.type
+      if (type === 'message') {
+        let duration = this.$modelStore.state.duration
+        if (toggle) {
+          setTimeout(() => {
+            this.$modelStore.commit('hideModel')
+          }, duration)
+        }
+      }
+      return toggle
     },
     success () {
       return this.$modelStore.state.success
@@ -50,23 +60,29 @@ export default {
     },
     icon () {
       return this.$modelStore.state.icon
+    },
+    duration () {
+      return this.$modelStore.state.duration
+    },
+    tip () {
+      return this.$modelStore.state.tip
     }
   },
-  mounted () {},
   methods: {
-    // async getData () {
-    //   let all = await this.$net()
-    //   console.log(all)
-    // },
     callBack () {
       this.$modelStore.commit('hideModel')
       // console.log(this.success())
-      this.success()
+      console.log(this.tip)
+      if (this.success !== null) {
+        this.success()
+      }
     },
     deleteSomething () {
       this.$modelStore.commit('hideModel')
       // console.log('删除')
-      this.fail()
+      if (this.fail !== null) {
+        this.fail()
+      }
     },
     cancel () {
       this.$modelStore.commit('hideModel')
@@ -157,7 +173,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  white-space:nowrap;
+  white-space: nowrap;
   .message-tip-item {
     opacity: 0.85;
     background: #000000;
@@ -176,7 +192,7 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
-      image{
+      image {
         width: 100%;
       }
     }
@@ -192,7 +208,7 @@ export default {
     .message-text {
       margin-top: 30px;
       font-size: 26px;
-      color: #FFFFFF;
+      color: #ffffff;
       padding: 0 68px;
     }
   }
@@ -206,7 +222,8 @@ export default {
     opacity: 0.85;
     background: #000000;
     border-radius: 16px;
-    width: 240px;height: 240px;
+    width: 240px;
+    height: 240px;
     display: flex;
     justify-content: center;
     align-items: center;
