@@ -51,12 +51,12 @@ export default {
       }, 5000)
     },
     // 模态框
-    model () {
+    model (e) {
       this.$messageModel({
         type: 'messageBox',
         title: '你好', // 标题
         inner: '哈哈哈哈', // 内容
-        tip: false, // 切换
+        tip: true, // 切换
         success: () => {
           // 要使用箭头函数
           console.log(this.show)
@@ -66,6 +66,7 @@ export default {
           console.log(this.show)
         }
       })
+      console.log(e)
     },
     // operate
     operate (ind) {
@@ -74,7 +75,7 @@ export default {
     deteleSomething () {
       console.log('删除')
     },
-    showSheet () {
+    showSheet (e) {
       this.toggle = true
     }
   },

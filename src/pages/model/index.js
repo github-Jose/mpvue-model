@@ -31,7 +31,7 @@ export default function registryModel (v) {
           type: data.type || '',
           icon: data.icon || '',
           duration: data.duration || 2000,
-          tip: data.tip
+          tip: data.tip = data.tip ? data.tip = true : data.tip = false
         }
         state = Object.assign(state, defaultData)
       },
